@@ -96,7 +96,7 @@ class DbInfo:
 		d = datetime.now()
 		time = str(d.hour) + ":" + str(d.minute)
 		url = "http://localhost/dbextension/data2.html"
-		url = "http://mobile.bahn.de/bin/mobil/bhftafel.exe/dox?si=" + stationId + "&bt=dep&ti=" + time + "&p=1111101&max=10&mode=actual&start=yes"
+		url = "http://mobile.bahn.de/bin/mobil/bhftafel.exe/dox?si=" + stationId + "&bt=dep&ti=" + time + "&p=1111101&max=100&mode=actual&start=yes"
 		return DbData(url)
 
 def main(session):
