@@ -38,7 +38,7 @@ def main(session, servicelist, **kwargs):
 
 def Plugins(**kwargs):
 	name = "DbInfo"
-	descr = "Zeigt Verspätungen oder Zugausfälle der DB"
+	descr = "Shows train delays of German Railways (Deutsche Bahn)"
 	return [ PluginDescriptor(name=name, description=descr, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main) ]
 
 #def Plugins(**kwargs):
