@@ -9,8 +9,8 @@ from DbUserConf import *
 spaceSeqPattern = re.compile(' +')
 
 def debug_log(*params):
-	print "DEBUG: ", params
-	#pass
+	#print "DEBUG: ", params
+	pass
 
 class DbTrainEvent:
 	def __init__(self, urlcon):
