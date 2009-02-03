@@ -9,8 +9,8 @@ from DbUserConf import *
 spaceSeqPattern = re.compile(' +')
 
 def debug_log(*params):
-	#print "DEBUG: ", params
-	pass
+	print "DEBUG: ", params
+	#pass
 
 class DbTrainEvent:
 	def __init__(self, urlcon):
@@ -57,7 +57,7 @@ class DbData:
 			self.trainEvents = []
 			while line:
 				line = urlcon.readline().strip()
-				if (line == '<p class="sqdetails">'):
+				if (line == '<p class="sqdetailsDep">'):
 					self.trainEvents.append(DbTrainEvent(urlcon))
 #		except IOError as (errno, strerror):
 #			print "I/O error({0}): {1}".format(errno, strerror)
