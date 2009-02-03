@@ -36,6 +36,6 @@ def autostart(reason, **kwargs):
 
 def Plugins(**kwargs):
 	name = "DMC"
-	descr = "DreamboxMessageClient - Hört auf Nachrichten vom DreamboxMessageServer"
+	descr = "DreamboxMessageClient - Listens to messages from DreamboxMessageServer"
  	return [ PluginDescriptor(name=name, description=descr, where = PluginDescriptor.WHERE_PLUGINMENU, fnc=main), 
 		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=autostart) ]
