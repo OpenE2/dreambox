@@ -5,6 +5,8 @@
 # constants to update
 VERSION=0.1
 
+# local vars
+dir=`dirname $0`
 print=1
 
 version() {
@@ -65,11 +67,11 @@ EndNumberParameters
 }
 
 # load settings
-if [[ ! -e settings.conf ]] {
+if [[ ! -e $dir/settings.conf ]] {
 	echo 'Could not find settings.conf!' >&2
 	exit 2;
 }
-source settings.conf
+source $dir/settings.conf
 
 # remote path
 remote_path="$1"
