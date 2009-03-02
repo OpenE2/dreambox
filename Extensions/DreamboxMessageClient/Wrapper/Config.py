@@ -9,10 +9,10 @@ class Plugins:
 class DMC:
 	def __init__(self):
 		self.enable = O(True)
-		self.host = O('localhost')
-		self.url = O('http://localhost:8180/dms/DreamboxMessageServer?action=receiver')
-		#self.host = O('open-dreambox.org')
-		#self.url = O('http://open-dreambox.org/dms/DreamboxMessageServer?action=receiver')
+		#self.host = O('localhost')
+		#self.url = O('http://localhost:8180/dms/DreamboxMessageServer?action=receiver')
+		self.host = O('open-dreambox.org')
+		self.url = O('http://open-dreambox.org/dms/DreamboxMessageServer?action=receiver')
 		self.port = O(8184)
 		self.password = O('asdf')
 		self.timeout = O(60)
