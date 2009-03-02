@@ -1,0 +1,89 @@
+#!/bin/zsh
+#
+# dreamUpload is a tiny FTP upload script for DreamBox users.
+
+# constants to update
+VERSION=0.1
+
+print=1
+
+version() {
+	sed -e 's/^\t\t//' <<EndVersion
+		dreamUpload    $VERSION
+		Author:        Stefan Endrullis (stefan@endrullis.de)
+		Last updated:  2009-03-01
+		License:       GPL, http://www.gnu.org/copyleft/gpl.html
+		
+		More information at http://open-dreambox.org/
+EndVersion
+}
+
+usage() {
+	help
+}
+
+help() {
+	sed -e 's/^\t\t//' <<EndUsage
+		Usage: dreamUpload [OPTIONS] REMOTE_PATH LOCAL_FILE1 [LOCAL_FILE2 ...]
+		
+		OPTIONS:
+		  -h --help     show this help dialog
+		  -v --version  show version information
+		  -q --quiet    be quiet
+		  -p --print    print only zsh commands
+EndUsage
+}
+
+# parse command line options
+TEMP=`getopt -o hvqp --long help,version,quiet,print \
+     -n 'dreamUpload' -- "$@"`
+
+if [ $? != 0 ] ; then usage ; exit 1 ; fi
+
+# Note the quotes around `$TEMP': they are essential!
+eval set -- "$TEMP"
+
+while true ; do
+	case "$1" in
+		-h|--help) help ; exit 0 ;;
+		-v|--version) version ; exit 0 ;;
+		-q|--quiet) print=0; shift ;;
+		-p|--print) print_cmds="echo"; shift ;;
+		--) shift ; break ;;
+		*) echo "Unknown option \"$1\"!" usage ; exit 1 ;;
+	esac
+done
+
+# check number of parameters
+if [[ $# < 2 ]] {
+	sed -e 's/^\t\t//' >&2 <<EndNumberParameters
+		Not enough parameters given!
+		
+		Try 'dreamUpload -h' for more information.
+EndNumberParameters
+	exit 1;
+}
+
+# load settings
+if [[ ! -e settings.conf ]] {
+	echo 'Could not find settings.conf!' >&2
+	exit 2;
+}
+source settings.conf
+
+# remote path
+remote_path="$1"
+shift
+
+# upload the files via FTP
+autoload -U zfinit ; zfinit &&\
+$print_cmds zftp open $DREAMBOX_HOST root "$DREAMBOX_PASSWORD" &&\
+$print_cmds zfcd "$remote_path" || { echo 'File upload failed!'; exit 3 }
+for filename in "$@"; {
+	$print_cmds zfput "$filename" || { echo 'File upload failed!'; exit 3 }
+}
+$print_cmds zfclose || { echo 'File upload failed!'; exit 3 }
+
+if [[ $print = 1 ]] {
+	print "Uploads successful"
+}
