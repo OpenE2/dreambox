@@ -3,17 +3,20 @@
 # dreamUpload is a tiny FTP upload script for DreamBox users.
 
 # constants to update
-VERSION=0.1.1
+VERSION=0.3
+DATE=2009-03-07
 
 # local vars
 dir=`dirname $0`
 print=1
+create=0
+delete=0
 
 version() {
 	sed -e 's/^\t\t//' <<EndVersion
 		dreamUpload    $VERSION
 		Author:        Stefan Endrullis (stefan@endrullis.de)
-		Last updated:  2009-03-01
+		Last updated:  $DATA
 		License:       GPL, http://www.gnu.org/copyleft/gpl.html
 		
 		More information at http://open-dreambox.org/
@@ -29,15 +32,22 @@ help() {
 		Usage: dreamUpload [OPTIONS] REMOTE_PATH LOCAL_FILE1 [LOCAL_FILE2 ...]
 		
 		OPTIONS:
+		  -c --create   create destination directory if necessary
+		  -d --delete   delete all files in the destination directory before copying the new files
 		  -h --help     show this help dialog
-		  -v --version  show version information
+		  -p --print    print only zsh FTP commands
 		  -q --quiet    be quiet
-		  -p --print    print only zsh commands
+		  -v --version  show version information
 EndUsage
 }
 
+exit_with() {
+	echo "$2" >&2
+	exit $1
+}
+
 # parse command line options
-TEMP=`getopt -o hvqp --long help,version,quiet,print \
+TEMP=`getopt -o cdhpqv --long create,delete,help,print,quiet,version \
      -n 'dreamUpload' -- "$@"`
 
 if [ $? != 0 ] ; then usage ; exit 1 ; fi
@@ -47,10 +57,12 @@ eval set -- "$TEMP"
 
 while true ; do
 	case "$1" in
+		-c|--create) create=1; shift ;;
+		-d|--delete) delete=1; shift ;;
 		-h|--help) help ; exit 0 ;;
-		-v|--version) version ; exit 0 ;;
-		-q|--quiet) print=0; shift ;;
 		-p|--print) print_cmds="echo"; shift ;;
+		-q|--quiet) print=0; shift ;;
+		-v|--version) version ; exit 0 ;;
 		--) shift ; break ;;
 		*) echo "Unknown option \"$1\"!" usage ; exit 1 ;;
 	esac
@@ -68,8 +80,7 @@ EndNumberParameters
 
 # load settings
 if [[ ! -e $dir/settings.conf ]] {
-	echo 'Could not find settings.conf!' >&2
-	exit 2;
+	exit_with 2 'Could not find settings.conf!'
 }
 source $dir/settings.conf
 
@@ -81,12 +92,41 @@ shift
 $print_cmds autoload -U zfinit &&\
 $print_cmds zfinit &&\
 $print_cmds zftp open $DREAMBOX_HOST root "$DREAMBOX_PASSWORD" &&\
-$print_cmds zfcd "$remote_path" || { echo 'File upload failed!'; exit 3 }
-for filename in "$@"; {
-	$print_cmds zfput "$filename" || { echo 'File upload failed!'; exit 3 }
+if [[ $create == 1 ]] {
+	$print_cmds zfcd "/" || exit_with 3 'File upload failed!'
+	# change into the remote directories stepwise and test if the next directory has to be created
+	for next_dir in `echo $remote_path[2,-1] | sed -e 's/\// /g'`; {
+		if [[ $print_cmds != "" ]] {
+			sed -e 's/^\t\t\t\t//' <<PrintCmdsCreateDirs
+				if zfls | grep $next_dir; then
+					zfcd $next_dir || exit_with 3 'File upload failed!'
+				else
+					zftp mkdir $next_dir && zfcd $next_dir || exit_with 3 'File upload failed!'
+				fi
+PrintCmdsCreateDirs
+		} else {
+			if zfls | grep $next_dir; then
+				zfcd $next_dir || exit_with 3 'File upload failed!'
+			else
+				zftp mkdir $next_dir && zfcd $next_dir || exit_with 3 'File upload failed!'
+			fi
+		}
+	}
+} else {
+	$print_cmds zfcd "$remote_path" || exit_with 3 'File upload failed!'
 }
-$print_cmds zfclose || { echo 'File upload failed!'; exit 3 }
+if [[ $delete == 1 ]] {
+	if [[ $print_cmds != "" ]] {
+		$print_cmds "zftp delete \`zfls -F | grep -v '/' | xargs\` || exit_with 3 'File upload failed!'"
+	} else {
+		zftp delete `zfls -F | grep -v '/' | xargs` || exit_with 3 'File upload failed!'
+	}
+}
+for filename in "$@"; {
+	$print_cmds zfput "$filename" || exit_with 3 'File upload failed!'
+}
+$print_cmds zfclose || exit_with 3 'File upload failed!'
 
-if [[ $print = 1 ]] {
+if [[ $print_cmds == "" && $print = 1 ]] {
 	print "Uploads successful"
 }
