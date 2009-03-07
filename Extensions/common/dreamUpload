@@ -3,7 +3,7 @@
 # dreamUpload is a tiny FTP upload script for DreamBox users.
 
 # constants to update
-VERSION=0.1
+VERSION=0.1.1
 
 # local vars
 dir=`dirname $0`
@@ -78,7 +78,8 @@ remote_path="$1"
 shift
 
 # upload the files via FTP
-autoload -U zfinit ; zfinit &&\
+$print_cmds autoload -U zfinit &&\
+$print_cmds zfinit &&\
 $print_cmds zftp open $DREAMBOX_HOST root "$DREAMBOX_PASSWORD" &&\
 $print_cmds zfcd "$remote_path" || { echo 'File upload failed!'; exit 3 }
 for filename in "$@"; {
