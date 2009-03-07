@@ -98,14 +98,14 @@ if [[ $create == 1 ]] {
 	for next_dir in `echo $remote_path[2,-1] | sed -e 's/\// /g'`; {
 		if [[ $print_cmds != "" ]] {
 			sed -e 's/^\t\t\t\t//' <<PrintCmdsCreateDirs
-				if zfls | grep $next_dir; then
+				if zfls | grep ^$next_dir$; then
 					zfcd $next_dir || exit_with 3 'File upload failed!'
 				else
 					zftp mkdir $next_dir && zfcd $next_dir || exit_with 3 'File upload failed!'
 				fi
 PrintCmdsCreateDirs
 		} else {
-			if zfls | grep $next_dir; then
+			if zfls | grep ^$next_dir$; then
 				zfcd $next_dir || exit_with 3 'File upload failed!'
 			else
 				zftp mkdir $next_dir && zfcd $next_dir || exit_with 3 'File upload failed!'
