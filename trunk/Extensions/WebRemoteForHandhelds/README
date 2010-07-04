@@ -1,0 +1,7 @@
+== Installation ==
+- run
+  make install
+- or simply copy simple_remote.html to dreambox:/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data
+
+== Start ==
+- open http://dreambox/web-data/simple_remote.html in the webbrowser of your handheld device
