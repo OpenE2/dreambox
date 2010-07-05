@@ -1,0 +1,22 @@
+#!/bin/zsh
+
+DIR=`dirname $0`
+
+case $1 in
+	clean)
+		if [ -e build ]; then
+			rm -fR build/* 2>/dev/null || true
+		else
+			mkdir build
+		fi
+		cp -fR package-files build/
+		;;
+	put)
+		mkdir -p build/package-files/$3
+		cp $2 build/package-files/$3
+		;;
+	build)
+		rm -fR build/**/.svn
+		$DIR/ipkg-build build/package-files dist
+		;;
+esac
