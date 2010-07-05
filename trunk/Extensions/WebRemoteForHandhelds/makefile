@@ -1,4 +1,12 @@
-dreamUpload=$(shell pwd)/../common/dreamUpload
+common=$(shell pwd)/../common
+
+package:
+	@${common}/package clean
+	@${common}/package put simple_remote.html /usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data
+	@${common}/package build
 
 install:
-	${dreamUpload} -c /usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data simple_remote.html
+	${common}/dreamUpload -c /usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web-data simple_remote.html
+
+clean:
+	rm -fR build 2>/dev/null || true
