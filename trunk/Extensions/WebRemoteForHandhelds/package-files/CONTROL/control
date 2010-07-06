@@ -7,4 +7,4 @@ Priority: optional
 Maintainer: Stefan Endrullis <stefan@endrullis.de>
 Homepage: https://open-dreambox.org/trac/dreambox/wiki/WebRemoteForHandhelds
 Depends: enigma2-plugin-extensions-webinterface(>1.0cvs20060516)
-Source: http://www.beispieldomain.de/files/dreambox/sources
+Source: https://anonymous:@mail.cweiske.de/svn/dreambox/trunk/Extensions/WebRemoteForHandhelds
