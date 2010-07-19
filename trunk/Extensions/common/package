@@ -17,6 +17,7 @@ case $1 in
 		;;
 	build)
 		rm -fR build/**/.svn
+		mkdir -p dist
 		$DIR/ipkg-build build/package-files dist
 		;;
 esac
