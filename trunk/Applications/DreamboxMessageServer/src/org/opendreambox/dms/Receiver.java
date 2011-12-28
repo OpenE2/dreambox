@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import java.util.ArrayList;
 
 /**
- * Receiver of dreambox messages.
+ * Receiver of Dreambox messages.
  */
 public class Receiver {
 	/** Logger. */
@@ -19,12 +19,12 @@ public class Receiver {
 
 	public Receiver(Socket socket) throws IOException {
 		this.socket = socket;
-		logger.info("Receiver created, weiting for password...");
+		logger.info("Receiver created, waiting for password...");
 
 		// create streams
 		r = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		w = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-		// read passwort (used as client id) from receiver
+		// read password (used as client id) from receiver
 		password = r.readLine().trim();
 
 		logger.info("... got password");
